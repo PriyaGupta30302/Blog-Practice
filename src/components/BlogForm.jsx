@@ -1,10 +1,13 @@
-// components/BlogForm.js
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import ImageUpload from './ImageUpload';
+import ImageUpload from '@/components/ImageUpload';
+import dynamic from 'next/dynamic';
+
+// Import RichTextEditor dynamically, disable SSR to avoid hydration issues
+const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false });
 
 export default function BlogForm({ post = null }) {
   const router = useRouter();
@@ -31,7 +34,6 @@ export default function BlogForm({ post = null }) {
     }));
   };
 
-  // Auto-generate slug from title
   const generateSlug = () => {
     const slug = formData.title
       .toLowerCase()
@@ -40,7 +42,6 @@ export default function BlogForm({ post = null }) {
     setFormData((prev) => ({ ...prev, slug }));
   };
 
-  // Handle image upload
   const handleImageUpload = (imageUrl) => {
     setFormData((prev) => ({ ...prev, featured_image: imageUrl }));
   };
@@ -52,13 +53,9 @@ export default function BlogForm({ post = null }) {
 
     try {
       if (isEditing) {
-        // Update existing post
         const { data, error } = await supabase
           .from('blog_posts')
-          .update({
-            ...formData,
-            updated_at: new Date().toISOString(),
-          })
+          .update({ ...formData, updated_at: new Date().toISOString() })
           .eq('id', post.id)
           .select();
 
@@ -67,7 +64,6 @@ export default function BlogForm({ post = null }) {
         alert('Post updated successfully!');
         router.push(`/post/${data[0].slug}`);
       } else {
-        // Create new post
         const { data, error } = await supabase
           .from('blog_posts')
           .insert([formData])
@@ -127,9 +123,7 @@ export default function BlogForm({ post = null }) {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="post-url-slug"
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Auto-generated from title, or enter custom
-        </p>
+        <p className="text-xs text-gray-500 mt-1">Auto-generated from title, or enter custom</p>
       </div>
 
       {/* Author */}
@@ -165,28 +159,17 @@ export default function BlogForm({ post = null }) {
         />
       </div>
 
-      {/* Content */}
+      {/* Content with Rich Text Editor */}
       <div>
-        <label htmlFor="content" className="block text-sm font-medium mb-2">
-          Content *
-        </label>
-        <textarea
-          id="content"
-          name="content"
-          value={formData.content}
-          onChange={handleChange}
-          required
-          rows="12"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Write your blog post content here..."
+        <label className="block text-sm font-medium mb-2">Content *</label>
+        <RichTextEditor
+          initialContent={formData.content}
+          onContentChange={({ html }) => setFormData((prev) => ({ ...prev, content: html }))}
         />
       </div>
 
-      {/* Image Upload Component - REPLACED URL INPUT */}
-      <ImageUpload 
-        onImageUploaded={handleImageUpload}
-        currentImage={formData.featured_image}
-      />
+      {/* Image Upload Component */}
+      <ImageUpload onImageUploaded={handleImageUpload} currentImage={formData.featured_image} />
 
       {/* Published Checkbox */}
       <div className="flex items-center">
@@ -203,7 +186,7 @@ export default function BlogForm({ post = null }) {
         </label>
       </div>
 
-      {/* Submit Button */}
+      {/* Submit Buttons */}
       <div className="flex gap-4">
         <button
           type="submit"
