@@ -18,8 +18,8 @@ export default function BlogCard({ post, isAdmin = false }) {
               src={post.featured_image}
               alt={post.title}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            />
-          </div>
+            />                                                                                                                                                            
+            </div>
         </Link>
       )}
 
@@ -27,9 +27,7 @@ export default function BlogCard({ post, isAdmin = false }) {
         <div className="flex items-center gap-2 mb-3 text-sm">
           <span className="text-gray-600 font-medium">{post.author}</span>
           <span className="text-gray-400">•</span>
-          <span className="text-gray-500">
-            {formatDate(post.created_at)}
-          </span>
+          <span className="text-gray-500">{formatDate(post.created_at)}</span>
           {post.published && (
             <span className="ml-auto bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
               Published

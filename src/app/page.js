@@ -41,6 +41,18 @@ export default async function HomePage() {
               </svg>
               New Post
             </Link>
+
+            <Link
+  href="/login"
+  className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-medium inline-flex items-center gap-2"
+>
+  Login
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H3m12 0l-4-4m4 4l-4 4" />
+  </svg>
+</Link>
+
+            
           </div>
         </div>
       </header>
